@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    metadata:
+      labels:
+        app: sample
+    spec:
+      containers:
+      - image: gcr.io/google_containers/echoserver:1.10
+        imagePullPolicy: Always
+        name: echoserver
+        ports:
+          - name: http
+            containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+      - image: nginx:latest
+        name: nginx
+        volumeMounts:
+          - mountPath: /etc/nginx/templates/nginx.conf.template
+            name: nginx-conf
+            subPath: nginx.conf.template
+        resources: {}
+        env:
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: NGINX_ENVSUBST_OUTPUT_DIR
+            value: /etc/nginx
+      volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: nginx.conf.template
+                path: nginx.conf.template
+            name: nginx-sidecar
+          name: nginx-conf
