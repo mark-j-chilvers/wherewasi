@@ -5,14 +5,15 @@ app = Flask(__name__)
 @app.route("/")
 def lookupNodeName():
     nodeName = request.args.get('nodeName')
-
+    print ('Node name: ', nodeName)
     # Configs can be set in Configuration class directly or using helper utility
     config.load_kube_config()
 
     v1 = client.CoreV1Api()
+    ret = v1.read_node(name=nodeName, async_req=False)
+    # topology.kubernetes.io/zone   
     
-
-    return "Hello from Python!"
+    return ret.get('metadata').get('labels')['topology.kubenetes.io/zone']
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
