@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodenamelookup
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodenamelookup
+  template:
+    metadata:
+      labels:
+        app: nodenamelookup
+    spec:
+      containers:
+      - image: us-central1-docker.pkg.dev/mjc-edge-to-mesh/mjcstuff/wherewasi-lookup:latest
+        imagePullPolicy: Always
+        name: nodenamelookup
+        ports:
+          - name: http
+            port: 8080
+            targetPort: 5000
