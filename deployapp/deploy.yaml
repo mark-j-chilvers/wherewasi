@@ -18,5 +18,4 @@ spec:
         name: nodenamelookup
         ports:
           - name: http
-            port: 8080
-            targetPort: 5000
+            containerPort: 5000
