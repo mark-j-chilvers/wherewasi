@@ -1,0 +1,38 @@
+apiVersion: v1
+data:
+  nginx.conf.template: |+
+    events {
+      worker_connections 1024;
+    }
+    http {
+      # NGINX will handle gzip compression of responses from the app server
+      #gzip on;
+      #gzip_proxied any;
+      #gzip_types text/plain application/json;
+      #gzip_min_length 1000;
+
+      server {
+        listen 80;
+
+        # NGINX will reject anything not matching /api
+        location / {
+          # Reject requests with unsupported HTTP method
+          if ($request_method !~ ^(GET|POST|HEAD|OPTIONS|PUT|DELETE)$) {
+            return 405;
+          }
+
+          # Only requests matching the expectations will
+          # get sent to the application server
+
+          # match port below to serving port of "main" container
+          
+          proxy_pass http://localhost:8080;
+          add_header X-chili-wherewasi ${MY_NODE_NAME};
+          proxy_set_header Host $host;
+        }
+      }
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: nginx-sidecar
