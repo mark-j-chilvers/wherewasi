@@ -12,9 +12,15 @@ def lookupNodeName():
 
     v1 = client.CoreV1Api()
     ret = v1.read_node(name=nodeName, async_req=False)
-    # topology.kubernetes.io/zone   
-    print('return: ', ret)
-    return ret.get('metadata').get('labels')['topology.kubenetes.io/zone']
+    # topology.kubernetes.io/zone
+
+    #print('Full return value: ', ret)
+    try:
+       labels = ret.metadata.labels
+       print('Labels: ', labels)
+       return labels['topology.kubernetes.io/zone']
+    except (TypeError, KeyError):       
+       return 'Node not found'
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
