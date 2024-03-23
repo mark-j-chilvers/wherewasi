@@ -18,7 +18,8 @@ def lookupNodeName():
     try:
        labels = ret.metadata.labels
        print('Labels: ', labels)
-       zone = labels['topology.kubernetes.io/zone']
+       zone = labels.get('topology.kubernetes.io/zone')
+       print('Zone: ', zone)
     except (TypeError, KeyError):       
        print('Node not found')
        zone = 'Node not found'
