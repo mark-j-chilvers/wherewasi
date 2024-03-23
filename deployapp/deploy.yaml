@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: nodenamelookup
 spec:
+  serviceAccountName: nodenameksa
   replicas: 2
   selector:
     matchLabels:
